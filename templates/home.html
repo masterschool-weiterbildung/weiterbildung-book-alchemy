@@ -1,0 +1,56 @@
+<html>
+<head>
+    <title>My Book Library</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css')}}">
+    <script>
+        function doSort() {
+            let sort = document.getElementById("sort").value;
+            let direction = document.getElementById("direction").value;
+
+            window.location.href='/home?sort='+ sort + '&direction=' + direction
+        }
+    </script>
+</head>
+<body>
+<div class="list-movies-title">
+    <h1>BOOK LIBRARIES</h1>
+</div>
+<div class="movie-grid">
+    <label for="direction">Direction</label>
+    <select name="direction" id="direction">
+        <option value="desc" {% if direction=='desc' %} selected="selected" {%
+                endif
+                %}>DESC
+        </option>
+        <option value="asc" {% if direction=='asc' %} selected="selected" {%
+                endif
+                %}>ASC
+        </option>
+    </select>
+    <label for="sort"> Sort </label>
+    <select name="sort" id="sort"
+            onchange="doSort();">
+        <option value="title" {% if sort=='title' %} selected="selected" {%
+                endif %}>TITLE
+        </option>
+        <option value="author" {% if sort=='author' %} selected="selected" {%
+                endif %}>AUTHOR
+        </option>
+    </select>
+</div>
+<div>
+    <ol class="movie-grid">
+        {% for author in authors_of_books %}
+        <li>
+            <div class='movie' title='{{ author.title }}'>
+                <div class='movie-title'>{{ author.title }}</div>
+                <img class='movie-poster' src={{ author.cover }}>
+                <div class='movie-title'>{{ author.name }}</div>
+            </div>
+        </li>
+        {% endfor %}
+    </ol>
+</div>
+</body>
+</html>
