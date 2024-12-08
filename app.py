@@ -3,10 +3,11 @@ from pathlib import Path
 
 from marshmallow import Schema, fields
 from flask import Flask, request, render_template
-from sqlalchemy import select, desc, asc, func
 
-from api_util import get_book_cover_from_api
-from data_models import db, Author, Book
+from data_models import db, Author
+from misc_util import author_add, book_add
+from query_util import search_book, sort_author_asc, sort_author_desc, \
+    sort_title_asc, sort_title_desc, fetch_without_order
 
 app = Flask(__name__)
 
@@ -58,10 +59,7 @@ def search():
 
     title = f"%{str(title).lower()}%"
 
-    authors_of_books = db.session.execute(
-        select(Book.title, Book.cover, Author.name).select_from(Book).join(
-            Author, Book.author_id == Author.id).filter(
-            func.lower(Book.title).like(title))).all()
+    authors_of_books = search_book(db, title)
 
     return render_template('home.html', authors_of_books=authors_of_books)
 
@@ -77,33 +75,19 @@ def home():
     if sort in options_sort and direction in options_directions:
 
         if sort == TITLE and direction == DIRECTION_DESC:
-            authors_of_books = db.session.execute(
-                select(Book.title, Book.cover, Author.name).select_from(
-                    Book).join(Author, Book.author_id == Author.id).order_by(
-                    desc(Book.title)))
+            authors_of_books = sort_title_desc(db)
 
         if sort == TITLE and direction == DIRECTION_ASC:
-            authors_of_books = db.session.execute(
-                select(Book.title, Book.cover, Author.name).select_from(
-                    Book).join(Author, Book.author_id == Author.id).order_by(
-                    asc(Book.title)))
+            authors_of_books = sort_title_asc(db)
 
         if sort == AUTHOR and direction == DIRECTION_DESC:
-            authors_of_books = db.session.execute(
-                select(Book.title, Book.cover, Author.name).select_from(
-                    Book).join(Author, Book.author_id == Author.id).order_by(
-                    desc(Author.name)))
+            authors_of_books = sort_author_desc(db)
 
         if sort == AUTHOR and direction == DIRECTION_ASC:
-            authors_of_books = db.session.execute(
-                select(Book.title, Book.cover, Author.name).select_from(
-                    Book).join(Author, Book.author_id == Author.id).order_by(
-                    asc(Author.name)))
+            authors_of_books = sort_author_asc(db)
 
     else:
-        authors_of_books = db.session.execute(
-            select(Book.title, Book.cover, Author.name).select_from(
-                Book).join(Author, Book.author_id == Author.id))
+        authors_of_books = fetch_without_order(db)
 
     return render_template('home.html',
                            authors_of_books=authors_of_books,
@@ -119,18 +103,8 @@ def add_author():
             birthdate = request.form.get("birthdate")
             date_of_death = request.form.get("date_of_death")
 
-            format = '%Y-%m-%d'
+            author_add(db, birthdate, date_of_death, name)
 
-            author = Author()
-            author.name = name
-            author.birth_date = datetime.strptime(birthdate,
-                                                  format).date()
-            if date_of_death:
-                author.date_of_death = datetime.strptime(date_of_death,
-                                                         format).date()
-
-            db.session.add(author)
-            db.session.commit()
             return render_template('add_author.html', success=True)
         except  Exception as e:
             print(e)
@@ -150,18 +124,8 @@ def add_book():
             title = request.form.get("title")
             publication_year = request.form.get("publication_year")
 
-            format = '%Y-%m-%d'
+            book_add(db, author_id, isbn, publication_year, title)
 
-            book = Book()
-            book.author_id = author_id
-            book.isbn = isbn
-            book.title = title
-            book.cover = get_book_cover_from_api(isbn)
-            book.birth_date = datetime.strptime(publication_year,
-                                                format).date()
-
-            db.session.add(book)
-            db.session.commit()
             return render_template('add_book.html', success=True,
                                    authors=list_of_authors)
         except  Exception as e:
