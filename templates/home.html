@@ -17,27 +17,42 @@
     <h1>BOOK LIBRARIES</h1>
 </div>
 <div class="movie-grid">
-    <label for="direction">Direction</label>
-    <select name="direction" id="direction">
-        <option value="desc" {% if direction=='desc' %} selected="selected" {%
-                endif
-                %}>DESC
-        </option>
-        <option value="asc" {% if direction=='asc' %} selected="selected" {%
-                endif
-                %}>ASC
-        </option>
-    </select>
-    <label for="sort"> Sort </label>
-    <select name="sort" id="sort"
-            onchange="doSort();">
-        <option value="title" {% if sort=='title' %} selected="selected" {%
-                endif %}>TITLE
-        </option>
-        <option value="author" {% if sort=='author' %} selected="selected" {%
-                endif %}>AUTHOR
-        </option>
-    </select>
+    <div>
+        <label for="direction">Direction</label>
+        <select name="direction" id="direction">
+            <option value="desc" {% if direction=='desc' %}
+                    selected="selected" {%
+                    endif
+                    %}>DESC
+            </option>
+            <option value="asc" {% if direction=='asc' %} selected="selected"
+                    {%
+                    endif
+                    %}>ASC
+            </option>
+        </select>
+    </div>
+    <div>
+        <label for="sort"> Sort </label>
+        <select name="sort" id="sort"
+                onchange="doSort();">
+            <option value="title" {% if sort=='title' %} selected="selected"
+                    {%
+                    endif %}>TITLE
+            </option>
+            <option value="author" {% if sort=='author' %} selected="selected"
+                    {%
+                    endif %}>AUTHOR
+            </option>
+        </select>
+    </div>
+    <div>
+        <form action="/search" method="POST">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title"><br><br>
+            <input type="submit" value="Search Book">
+        </form>
+    </div>
 </div>
 <div>
     <ol class="movie-grid">

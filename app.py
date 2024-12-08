@@ -3,7 +3,7 @@ from pathlib import Path
 
 from marshmallow import Schema, fields
 from flask import Flask, request, render_template
-from sqlalchemy import select, desc, asc
+from sqlalchemy import select, desc, asc, func
 
 from api_util import get_book_cover_from_api
 from data_models import db, Author, Book
@@ -50,6 +50,20 @@ DIRECTION_DESC = "desc"
 
 TITLE = "title"
 AUTHOR = "author"
+
+
+@app.route('/search', methods=['POST'])
+def search():
+    title = request.form.get("title")
+
+    title = f"%{str(title).lower()}%"
+
+    authors_of_books = db.session.execute(
+        select(Book.title, Book.cover, Author.name).select_from(Book).join(
+            Author, Book.author_id == Author.id).filter(
+            func.lower(Book.title).like(title))).all()
+
+    return render_template('home.html', authors_of_books=authors_of_books)
 
 
 @app.route('/home', methods=['GET'])
