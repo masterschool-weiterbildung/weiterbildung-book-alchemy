@@ -53,6 +53,15 @@
             <input type="submit" value="Search Book">
         </form>
     </div>
+    <div>
+        {% if success == True %}
+        <h2 style="color:green">The book has been deleted successfully.</h2>
+        {% endif %}
+
+        {% if success == False %}
+        <h2 style="color:red">Unable to delete the book</h2>
+        {% endif %}
+    </div>
 </div>
 <div>
     <ol class="movie-grid">
@@ -62,6 +71,11 @@
                 <div class='movie-title'>{{ author.title }}</div>
                 <img class='movie-poster' src={{ author.cover }}>
                 <div class='movie-title'>{{ author.name }}</div>
+                <div class='movie-title'>
+                    <input type="button"
+                           onclick="location.href='/book/{{author.id}}/delete';"
+                           value="Delete"/>
+                </div>
             </div>
         </li>
         {% endfor %}

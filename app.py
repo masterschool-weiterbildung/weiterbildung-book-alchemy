@@ -2,10 +2,11 @@ from datetime import datetime
 from pathlib import Path
 
 from marshmallow import Schema, fields
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
+from sqlalchemy import delete
 
-from data_models import db, Author
-from misc_util import author_add, book_add
+from data_models import db, Author, Book
+from crud_util import author_add, book_add, book_delete
 from query_util import search_book, sort_author_asc, sort_author_desc, \
     sort_title_asc, sort_title_desc, fetch_without_order
 
@@ -134,6 +135,26 @@ def add_book():
                                    authors=list_of_authors)
 
     return render_template('add_book.html', authors=list_of_authors)
+
+
+@app.route('/book/<int:book_id>/delete')
+def delete_book(book_id):
+    if book_id is None:
+        return "Book ID not found", 404
+
+    authors_of_books = fetch_without_order(db)
+
+    try:
+        book_delete(db, book_id)
+
+        return render_template('home.html',
+                               authors_of_books=authors_of_books,
+                               success=True)
+    except Exception as e:
+        print(e)
+        return render_template('home.html',
+                               authors_of_books=authors_of_books,
+                               success=False)
 
 
 if __name__ == '__main__':

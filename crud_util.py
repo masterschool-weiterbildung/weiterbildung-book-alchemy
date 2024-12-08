@@ -29,3 +29,9 @@ def book_add(db, author_id, isbn, publication_year, title):
                                         format).date()
     db.session.add(book)
     db.session.commit()
+
+
+def book_delete(db, book_id):
+    book = db.session.get(Book, book_id)
+    db.session.delete(book)
+    db.session.commit()
