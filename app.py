@@ -107,7 +107,7 @@ def search():
                            authors_of_books=authors_of_books)
 
 
-@app.route('/home', methods=['GET'])
+@app.route('/', methods=['GET'])
 def home():
     """
     Display the home page with a list of books and sorting options.
