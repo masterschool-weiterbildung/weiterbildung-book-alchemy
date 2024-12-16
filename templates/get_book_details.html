@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style-forms.css')}}">
+</head>
+
+<body>
+<div id="container">
+    <div class="card" id="card-details">
+        <div class="child-form-add-book">
+            <label>Author: {{ author.name }}</label>
+        </div>
+        <div class="child-form-add-book">
+            <label>ISBN: {{ book.isbn }}</label>
+        </div>
+        <div class="child-form-add-book">
+            <label>Title: {{ book.title }}</label>
+        </div>
+        <div class="child-form-add-book">
+            <label>Publication Year: {{
+                book.publication_year }}</label>
+        </div>
+        <img class='movie-poster' src={{ book.cover }}>
+        <div class='child-form-add-book'>
+            <input type="button"
+                   onclick="location.href='/home'"
+                   value="Back to Home"/>
+        </div>
+    </div>
+</div>
+</body>
+</html>

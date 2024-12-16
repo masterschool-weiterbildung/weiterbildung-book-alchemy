@@ -19,7 +19,7 @@
 <div class="movie-grid">
     <div>
         <label for="direction">Direction</label>
-        <select name="direction" id="direction">
+        <select name="direction" id="direction" onchange="doSort();">
             <option value="desc" {% if direction=='desc' %}
                     selected="selected" {%
                     endif
@@ -61,6 +61,30 @@
         {% if success == False %}
         <h2 style="color:red">Unable to delete the book</h2>
         {% endif %}
+
+        {% if success_author == True %}
+        <h2 style="color:green">The Author has been deleted successfully.</h2>
+        {% endif %}
+
+        {% if success_author == False %}
+        <h2 style="color:red">Unable to delete the Author</h2>
+        {% endif %}
+
+        {% if success_search == False %}
+        <h2 style="color:red">There were no books match the search
+            criteria.</h2>
+        {% endif %}
+
+    </div>
+    <div>
+        <form action="{{ url_for('add_book') }}">
+            <input type="submit" value="Add Book"/>
+        </form>
+    </div>
+    <div>
+        <form action="{{ url_for('add_author') }}">
+            <input type="submit" value="Add Author"/>
+        </form>
     </div>
 </div>
 <div>
@@ -73,8 +97,18 @@
                 <div class='movie-title'>{{ author.name }}</div>
                 <div class='movie-title'>
                     <input type="button"
+                           onclick="location.href='/author/{{author.author_id}}/delete';"
+                           value="Delete Author"/>
+                </div>
+                <div class='movie-title'>
+                    <input type="button"
                            onclick="location.href='/book/{{author.id}}/delete';"
-                           value="Delete"/>
+                           value="Delete Book"/>
+                </div>
+                <div class='movie-title'>
+                    <input type="button"
+                           onclick="location.href='/book/{{author.id}}/details';"
+                           value="Details"/>
                 </div>
             </div>
         </li>
